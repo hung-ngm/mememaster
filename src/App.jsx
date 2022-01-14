@@ -13,6 +13,7 @@ import NFTBalance from "components/NFTBalance";
 import NFTTokenIds from "components/NFTTokenIds";
 import { Menu, Layout} from "antd";
 import SearchCollections from "components/SearchCollections";
+import MemeGenerates from "components/MemeGenerates/MemeGenerates";
 import "antd/dist/antd.css";
 import NativeBalance from "components/NativeBalance";
 import "./style.css";
@@ -90,6 +91,9 @@ const App = ({ isServerInfo }) => {
             <Menu.Item key="transactions">
               <NavLink to="/Transactions">📑 Your Transactions</NavLink>
             </Menu.Item>
+            <Menu.Item key="memesGenerate">
+              <NavLink to="/MemesGenerate">Memes Generate</NavLink>
+            </Menu.Item>
           </Menu>
           <div style={styles.headerRight}>
             <Chains />
@@ -107,6 +111,9 @@ const App = ({ isServerInfo }) => {
             </Route>
             <Route path="/Transactions">
               <NFTMarketTransactions />
+            </Route>
+            <Route path="/MemesGenerate">
+              <MemeGenerates />
             </Route>
           </Switch>
           <Redirect to="/NFTMarketPlace" />
