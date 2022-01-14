@@ -169,7 +169,7 @@ const MemeNFTCreate = () => {
 
           <Row>
             <div id="createButton" style={styles.titleWrapper}>
-              <Button type="primary" shape="round" size="large">Create</Button>
+              <Button type="primary" shape="round" size="large">Create item</Button>
             </div>
           </Row>
         </Col>
