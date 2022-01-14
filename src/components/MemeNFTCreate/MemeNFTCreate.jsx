@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { Row, Col, Upload, message, Typography, Input, Tooltip } from 'antd';
+import { Row, Col, Upload, message, Typography, Input, Button } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 
 const { Dragger } = Upload;
 const { Title } = Typography;
+const { TextArea } = Input;
 
 const formatNumber = (value) => {
   value += '';
@@ -30,6 +31,21 @@ const styles = {
   },
   titleWrapper: {
     padding: "10px",
+    display: "inline-block",
+    width: "100%",
+  },
+  priceInput: {
+    width: "100%",
+    minWidth: "475px",
+  },
+  nameInput: {
+    width: "100%",
+    minWidth: "475px"
+  },
+  descriptionTextArea: {
+    height: "120px",
+    minWidth: "475px",
+    width: "100%",
   }
 }
 
@@ -55,63 +71,38 @@ const props = {
   },
 };
 
-const NumericInput = (props) => {
-  const onPriceChange = e => {
-    const { value } = e.target;
-    const reg = /^-?\d*(\.\d*)?$/;
-    if ((!isNaN(value) && reg.test(value)) || value === '' || value === '-') {
-      props.onChange(value);
-    }
-  };
-
-  // '.' at the end or only '-' in the input box.
-  const onBlur = () => {
-    const { value, onBlur, onChange } = props;
-    let valueTemp = value;
-    if (value.charAt(value.length - 1) === '.' || value === '-') {
-      valueTemp = value.slice(0, -1);
-    }
-    onPriceChange(valueTemp.replace(/0*(\d+)/, '$1'));
-    if (onBlur) {
-      onBlur();
-    }
-  };
+const NumericInput = (props) => {  
   const { value, onChange } = props;
-  const title = value ? (
-    <span className="numeric-input-title">{value !== '-' ? formatNumber(value) : '-'}</span>
-  ) : (
-    'Input a number'
-  );
   return (
-    <Tooltip
-      trigger={['focus']}
-      title={title}
-      placement="topLeft"
-      overlayClassName="numeric-input"
-    >
-      <Input
-        
-        onChange={onChange}
-        onBlur={onBlur}
-        placeholder="Input a number"
-        maxLength={25}
-      />
-    </Tooltip>
+    <Input
+      size="large"
+      onChange={onChange}
+      placeholder="Input a number"
+      maxLength={100}
+      style={styles.priceInput}
+    />
   );
-
 }
 
 const MemeNFTCreate = () => {
-  const [value, setValue] = useState(0);
-  const onChange = (value) => {
-    setValue(value);
+  const [price, setPrice] = useState(0);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const onPriceChange = (value) => {
+    setPrice(value);
+  }
+  const onNameChange = (value) => {
+    setName(value);
+  }
+  const onDescriptionChange = (value) => {
+    setDescription(value);
   }
   
   return (
     <div>
       <Title>Create your meme as an NFT</Title>
       <Row>
-        <Col span={18}>
+        <Col span={18} id="createFile">
           <Row>
             <div id="fileUpload" style={styles.titleWrapper}>
               <Title level={4}>Upload file</Title>
@@ -128,20 +119,63 @@ const MemeNFTCreate = () => {
                   </Dragger>    
               </Col>
             </div>
+          </Row>
+          
+          <Row>
 
             <div id="price" style={styles.titleWrapper}>
               <Title level={4}>Price</Title>
               <Col span={24}>
-                <NumericInput style={{ width: '100%' }} value={value} onChange={onChange} />
-              </Col>
-              
+                <NumericInput value={price} onChange={onPriceChange} />
+              </Col>  
             </div>
-            <div id="name"></div>
-            <div id="description"></div>
-            
+          </Row>
+
+          <Row>
+            <div id="name" style={styles.titleWrapper}>
+              <Title level={4}>Name</Title>
+              <Col span={24}>
+                <Input
+                  size="large"
+                  placeholder="Enter your name"
+                  style={styles.nameInput} 
+                  value={name} 
+                  onChange={onNameChange} 
+                />
+              </Col>
+            </div>
+          </Row>
+
+          <Row>
+            <div id="description" style={styles.titleWrapper}>
+              <Row id="descriptionTitle">
+                <Col span={5}>
+                  <Title level={4}>Description</Title>
+                </Col>
+                <Col span={19}>
+                  <Title level={4} style={{ color: 'grey' }}>(Optional)</Title>
+                </Col>
+              </Row>
+              <Row id="descriptionText">
+                <TextArea 
+                  showCount 
+                  maxLength={150} 
+                  style={styles.descriptionTextArea}
+                  onChange={onDescriptionChange} 
+                />
+              </Row>
+            </div>  
+          </Row>
+
+          <Row>
+            <div id="createButton" style={styles.titleWrapper}>
+              <Button type="primary" shape="round" size="large">Create</Button>
+            </div>
           </Row>
         </Col>
-        <Col span={6}>Preview</Col>
+        <Col span={6} id="previewFile">
+          <Title level={4} style={styles.titleWrapper}>Preview</Title>
+        </Col>
       </Row>
     </div>
   )
