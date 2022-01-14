@@ -27,8 +27,8 @@ const styles = {
     justifyContent: "center",
     fontFamily: "Roboto, sans-serif",
     color: "#041836",
-    marginTop: "130px",
-    padding: "10px",
+    marginTop: "100px",
+    padding: "8px",
   },
   header: {
     position: "fixed",
@@ -50,12 +50,14 @@ const styles = {
     fontSize: "15px",
     fontWeight: "600",
   },
+  nftMarketplace: {
+    marginTop: "130px",
+    padding: "10px",
+  }
 };
 const App = ({ isServerInfo }) => {
   const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading } =
     useMoralis();
-
-
 
   const [inputValue, setInputValue] = useState("explore");
 
@@ -92,7 +94,7 @@ const App = ({ isServerInfo }) => {
               <NavLink to="/Transactions">📑 Your Transactions</NavLink>
             </Menu.Item>
             <Menu.Item key="memesGenerate">
-              <NavLink to="/MemesGenerate">Memes Generate</NavLink>
+              <NavLink to="/MemesGenerate">😁 Memes Generate</NavLink>
             </Menu.Item>
           </Menu>
           <div style={styles.headerRight}>
