@@ -1,47 +1,47 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity >=0.4.25 <0.7.0;
 
 import "github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Counters.sol";
 import "github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol";
 import "github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/security/ReentrancyGuard.sol";
 
 contract marketPlaceBoilerPlate is ReentrancyGuard {
-    using Counters for Counters.Counter;
-    Counters.Counter private _itemIds;
-    Counters.Counter private _itemsSold;
+  using Counters for Counters.Counter;
+  Counters.Counter private _itemIds;
+  Counters.Counter private _itemsSold;
+
+  address public owner;
     
-     address public owner;
-     
-     constructor() {
-         owner = msg.sender;
-     }
-     
-     struct MarketItem {
-         uint itemId;
-         address nftContract;
-         uint256 tokenId;
-         address payable seller;
-         address payable owner;
-         uint256 price;
-         bool sold;
-     }
-     
-     mapping(uint256 => MarketItem) private idToMarketItem;
-     
-     event MarketItemCreated (
-        uint indexed itemId,
-        address indexed nftContract,
-        uint256 indexed tokenId,
-        address seller,
-        address owner,
-        uint256 price,
-        bool sold
-     );
-     
-     event MarketItemSold (
-         uint indexed itemId,
-         address owner
-         );
+  constructor() {
+    owner = msg.sender;
+  }
+    
+  struct MarketItem {
+    uint itemId;
+    address nftContract;
+    uint256 tokenId;
+    address payable seller;
+    address payable owner;
+    uint256 price;
+    bool sold;
+  }
+    
+  mapping(uint256 => MarketItem) private idToMarketItem;
+  
+  event MarketItemCreated (
+    uint indexed itemId,
+    address indexed nftContract,
+    uint256 indexed tokenId,
+    address seller,
+    address owner,
+    uint256 price,
+    bool sold
+  );
+    
+  event MarketItemSold (
+    uint indexed itemId,
+    address owner
+  );
      
     
     

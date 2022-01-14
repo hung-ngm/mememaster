@@ -86,7 +86,7 @@ export default function MemeGenerates() {
 
   return (
     <div className="MemeGenerates">
-      <h1> Excalidraw Example</h1>
+      <h1>Draw your memes</h1>
       <div className="button-wrapper">
         <button className="update-scene" onClick={updateScene}>
           Update Scene
