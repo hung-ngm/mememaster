@@ -191,6 +191,7 @@ const MemeNFTCreate = () => {
                 </Col>
               </Row>
               <Row id="descriptionText">
+              
                 <TextArea 
                   showCount 
                   maxLength={150} 
