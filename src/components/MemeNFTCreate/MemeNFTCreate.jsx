@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Row, Col, Upload, message, Typography, Input, Button } from 'antd';
+import { Row, Col, Upload, message, Typography, Input, Button, Tooltip } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 
 const { Dragger } = Upload;
@@ -54,7 +54,7 @@ const props = {
   multiple: true,
   action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
   onChange(info) {
-    console.log(info);
+    console.log("info:", info);
     const { status } = info.file;
     console.log(status);
     if (status !== 'uploading') {
@@ -72,15 +72,48 @@ const props = {
 };
 
 const NumericInput = (props) => {  
-  const { value, onChange } = props;
+  const onChange = e => {
+    console.log(e.target.value)
+    const reg = /^-?\d*(\.\d*)?$/;
+    if ((!isNaN(e.target.value) && reg.test(e.target.value)) || e.target.value === '' || e.target.value === '-') {
+      props.onChange(e.target.value);
+    }
+  };
+
+  const onBlur = () => {
+    const { value, onChange } = props;
+    let valueTemp = value;
+    if (value.charAt(value.length - 1) === '.' || value === '-') {
+      valueTemp = value.slice(0, -1);
+    }
+    onChange(valueTemp.replace(/0*(\d+)/, '$1'));
+    if (onBlur) {
+      onBlur();
+    }
+  };
+
+  const { value } = props;
+  const title = value ? (
+    <span className="numeric-input-title">{value !== '-' ? formatNumber(value) : '-'}</span>
+  ) : (
+    'Input a number'
+  );
   return (
-    <Input
-      size="large"
-      onChange={onChange}
-      placeholder="Input a number"
-      maxLength={100}
-      style={styles.priceInput}
-    />
+    <Tooltip
+      trigger={['focus']}
+      title={title}
+      placement="topLeft"
+      overlayClassName="numeric-input"
+    >
+      <Input
+        size="large"
+        value={value}
+        onChange={onChange}
+        placeholder="Input a number"
+        maxLength={100}
+        style={styles.priceInput}
+      />
+    </Tooltip>
   );
 }
 
@@ -88,15 +121,23 @@ const MemeNFTCreate = () => {
   const [price, setPrice] = useState(0);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const onPriceChange = (value) => {
-    setPrice(value);
+  const [images, setImages] = React.useState([]);
+  const maxNumber = 69;
+  const onPriceChange = (e) => {
+    setPrice(e);
   }
-  const onNameChange = (value) => {
-    setName(value);
+  const onNameChange = (e) => {
+    setName(e.target.value);
   }
-  const onDescriptionChange = (value) => {
-    setDescription(value);
+  const onDescriptionChange = (e) => {
+    setDescription(e.target.value);
   }
+
+  const onImageChange = (imageList, addUpdateIndex) => {
+    // data for submit
+    console.log(imageList, addUpdateIndex);
+    setImages(imageList);
+  };
   
   return (
     <div>
@@ -116,14 +157,12 @@ const MemeNFTCreate = () => {
                     Support for a single or bulk upload. Strictly prohibit from uploading company data or other
                     band files
                   </p>
-                  
-                  </Dragger>    
+                </Dragger> 
               </Col>
             </div>
           </Row>
           
           <Row>
-
             <div id="price" style={styles.titleWrapper}>
               <Title level={4}>Price</Title>
               <Col span={24}>
@@ -161,6 +200,7 @@ const MemeNFTCreate = () => {
                 <TextArea 
                   showCount 
                   maxLength={150} 
+                  value={description}
                   style={styles.descriptionTextArea}
                   onChange={onDescriptionChange} 
                 />
@@ -173,6 +213,7 @@ const MemeNFTCreate = () => {
               <Button type="primary" shape="round" size="large">Create item</Button>
             </div>
           </Row>
+
         </Col>
         <Col span={6} id="previewFile">
           <Title level={4} style={styles.titleWrapper}>Preview</Title>

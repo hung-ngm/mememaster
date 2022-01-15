@@ -57,11 +57,11 @@ const menuItems = [
   //   value: "Binance",
   //   icon: <BSCLogo />,
   // },
-  // {
-  //   key: "0x61",
-  //   value: "Smart Chain Testnet",
-  //   icon: <BSCLogo />,
-  // },
+  {
+    key: "0x61",
+    value: "Smart Chain Testnet",
+    icon: <BSCLogo />,
+  },
   // {
   //   key: "0x89",
   //   value: "Polygon",
