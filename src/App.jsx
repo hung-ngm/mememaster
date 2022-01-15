@@ -13,6 +13,8 @@ import NFTBalance from "components/NFTBalance";
 import NFTTokenIds from "components/NFTTokenIds";
 import { Menu, Layout} from "antd";
 import SearchCollections from "components/SearchCollections";
+import MemeGenerates from "components/MemeGenerates/MemeGenerates";
+import MemeNFTCreate from "components/MemeNFTCreate/MemeNFTCreate";
 import "antd/dist/antd.css";
 import NativeBalance from "components/NativeBalance";
 import "./style.css";
@@ -26,8 +28,8 @@ const styles = {
     justifyContent: "center",
     fontFamily: "Roboto, sans-serif",
     color: "#041836",
-    marginTop: "130px",
-    padding: "10px",
+    marginTop: "100px",
+    padding: "8px",
   },
   header: {
     position: "fixed",
@@ -49,12 +51,14 @@ const styles = {
     fontSize: "15px",
     fontWeight: "600",
   },
+  nftMarketplace: {
+    marginTop: "130px",
+    padding: "10px",
+  }
 };
 const App = ({ isServerInfo }) => {
   const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading } =
     useMoralis();
-
-
 
   const [inputValue, setInputValue] = useState("explore");
 
@@ -90,6 +94,12 @@ const App = ({ isServerInfo }) => {
             <Menu.Item key="transactions">
               <NavLink to="/Transactions">📑 Your Transactions</NavLink>
             </Menu.Item>
+            <Menu.Item key="memesGenerate">
+              <NavLink to="/MemesGenerate">😁 Memes Generate</NavLink>
+            </Menu.Item>
+            <Menu.Item key="memeNFTCreate">
+              <NavLink to="/MemeNFTCreate">😁 Meme NFT Create</NavLink>
+            </Menu.Item>
           </Menu>
           <div style={styles.headerRight}>
             <Chains />
@@ -107,6 +117,12 @@ const App = ({ isServerInfo }) => {
             </Route>
             <Route path="/Transactions">
               <NFTMarketTransactions />
+            </Route>
+            <Route path="/MemesGenerate">
+              <MemeGenerates />
+            </Route>
+            <Route path="/MemeNFTCreate">
+              <MemeNFTCreate />
             </Route>
           </Switch>
           <Redirect to="/NFTMarketPlace" />
