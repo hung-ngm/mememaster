@@ -54,7 +54,7 @@ const props = {
   multiple: true,
   action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
   onChange(info) {
-    console.log(info);
+    console.log("info:", info);
     const { status } = info.file;
     console.log(status);
     if (status !== 'uploading') {
@@ -121,6 +121,8 @@ const MemeNFTCreate = () => {
   const [price, setPrice] = useState(0);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [images, setImages] = React.useState([]);
+  const maxNumber = 69;
   const onPriceChange = (e) => {
     setPrice(e);
   }
@@ -130,6 +132,12 @@ const MemeNFTCreate = () => {
   const onDescriptionChange = (e) => {
     setDescription(e.target.value);
   }
+
+  const onImageChange = (imageList, addUpdateIndex) => {
+    // data for submit
+    console.log(imageList, addUpdateIndex);
+    setImages(imageList);
+  };
   
   return (
     <div>
@@ -149,8 +157,7 @@ const MemeNFTCreate = () => {
                     Support for a single or bulk upload. Strictly prohibit from uploading company data or other
                     band files
                   </p>
-
-                  </Dragger>    
+                </Dragger> 
               </Col>
             </div>
           </Row>
@@ -206,7 +213,7 @@ const MemeNFTCreate = () => {
               <Button type="primary" shape="round" size="large">Create item</Button>
             </div>
           </Row>
-          
+
         </Col>
         <Col span={6} id="previewFile">
           <Title level={4} style={styles.titleWrapper}>Preview</Title>
