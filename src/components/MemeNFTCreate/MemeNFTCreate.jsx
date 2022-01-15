@@ -156,7 +156,6 @@ const MemeNFTCreate = () => {
           </Row>
           
           <Row>
-
             <div id="price" style={styles.titleWrapper}>
               <Title level={4}>Price</Title>
               <Col span={24}>
@@ -191,7 +190,6 @@ const MemeNFTCreate = () => {
                 </Col>
               </Row>
               <Row id="descriptionText">
-              
                 <TextArea 
                   showCount 
                   maxLength={150} 
@@ -208,6 +206,7 @@ const MemeNFTCreate = () => {
               <Button type="primary" shape="round" size="large">Create item</Button>
             </div>
           </Row>
+          
         </Col>
         <Col span={6} id="previewFile">
           <Title level={4} style={styles.titleWrapper}>Preview</Title>
