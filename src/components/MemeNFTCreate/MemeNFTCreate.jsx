@@ -1,10 +1,26 @@
 import React, { useState } from 'react'
-import { Row, Col, Upload, message, Typography, Input, Button } from 'antd';
+import { Row, Col, Upload, message, Typography, Input, Button, Tooltip } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 
 const { Dragger } = Upload;
 const { Title } = Typography;
 const { TextArea } = Input;
+
+const formatNumber = (value) => {
+  value += '';
+  const list = value.split('.');
+  const prefix = list[0].charAt(0) === '-' ? '-' : '';
+  let num = prefix ? list[0].slice(1) : list[0];
+  let result = '';
+  while (num.length > 3) {
+    result = `,${num.slice(-3)}${result}`;
+    num = num.slice(0, num.length - 3);
+  }
+  if (num) {
+    result = num + result;
+  }
+  return `${prefix}${result}${list[1] ? `.${list[1]}` : ''}`;
+}
 
 const styles = {
   fileUpload: {
@@ -56,16 +72,48 @@ const props = {
 };
 
 const NumericInput = (props) => {  
-  const { value, onChange } = props;
+  const onChange = e => {
+    console.log(e.target.value)
+    const reg = /^-?\d*(\.\d*)?$/;
+    if ((!isNaN(e.target.value) && reg.test(e.target.value)) || e.target.value === '' || e.target.value === '-') {
+      props.onChange(e.target.value);
+    }
+  };
+
+  const onBlur = () => {
+    const { value, onChange } = props;
+    let valueTemp = value;
+    if (value.charAt(value.length - 1) === '.' || value === '-') {
+      valueTemp = value.slice(0, -1);
+    }
+    onChange(valueTemp.replace(/0*(\d+)/, '$1'));
+    if (onBlur) {
+      onBlur();
+    }
+  };
+
+  const { value } = props;
+  const title = value ? (
+    <span className="numeric-input-title">{value !== '-' ? formatNumber(value) : '-'}</span>
+  ) : (
+    'Input a number'
+  );
   return (
-    <Input
-      size="large"
-      value={value}
-      onChange={onChange}
-      placeholder="Input a number"
-      maxLength={100}
-      style={styles.priceInput}
-    />
+    <Tooltip
+      trigger={['focus']}
+      title={title}
+      placement="topLeft"
+      overlayClassName="numeric-input"
+    >
+      <Input
+        size="large"
+        value={value}
+        onChange={onChange}
+        placeholder="Input a number"
+        maxLength={100}
+        style={styles.priceInput}
+      />
+    </Tooltip>
   );
 }
 
@@ -74,7 +122,7 @@ const MemeNFTCreate = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const onPriceChange = (e) => {
-    setPrice(e.target.value);
+    setPrice(e);
   }
   const onNameChange = (e) => {
     setName(e.target.value);
