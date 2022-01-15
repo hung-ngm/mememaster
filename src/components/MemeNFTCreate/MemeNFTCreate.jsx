@@ -6,22 +6,6 @@ const { Dragger } = Upload;
 const { Title } = Typography;
 const { TextArea } = Input;
 
-const formatNumber = (value) => {
-  value += '';
-  const list = value.split('.');
-  const prefix = list[0].charAt(0) === '-' ? '-' : '';
-  let num = prefix ? list[0].slice(1) : list[0];
-  let result = '';
-  while (num.length > 3) {
-    result = `,${num.slice(-3)}${result}`;
-    num = num.slice(0, num.length - 3);
-  }
-  if (num) {
-    result = num + result;
-  }
-  return `${prefix}${result}${list[1] ? `.${list[1]}` : ''}`;
-}
-
 const styles = {
   fileUpload: {
     margin: "15px",
@@ -76,6 +60,7 @@ const NumericInput = (props) => {
   return (
     <Input
       size="large"
+      value={value}
       onChange={onChange}
       placeholder="Input a number"
       maxLength={100}
@@ -88,14 +73,14 @@ const MemeNFTCreate = () => {
   const [price, setPrice] = useState(0);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const onPriceChange = (value) => {
-    setPrice(value);
+  const onPriceChange = (e) => {
+    setPrice(e.target.value);
   }
-  const onNameChange = (value) => {
-    setName(value);
+  const onNameChange = (e) => {
+    setName(e.target.value);
   }
-  const onDescriptionChange = (value) => {
-    setDescription(value);
+  const onDescriptionChange = (e) => {
+    setDescription(e.target.value);
   }
   
   return (
@@ -116,7 +101,7 @@ const MemeNFTCreate = () => {
                     Support for a single or bulk upload. Strictly prohibit from uploading company data or other
                     band files
                   </p>
-                  
+
                   </Dragger>    
               </Col>
             </div>
@@ -161,6 +146,7 @@ const MemeNFTCreate = () => {
                 <TextArea 
                   showCount 
                   maxLength={150} 
+                  value={description}
                   style={styles.descriptionTextArea}
                   onChange={onDescriptionChange} 
                 />
