@@ -186,6 +186,7 @@ const MemeNFTCreate = () => {
       desc: description
     })
   }
+  console.log(images);
   
   return (
     <div>
