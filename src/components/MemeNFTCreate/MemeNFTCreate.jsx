@@ -11,11 +11,13 @@ import {
   Button,
   Tooltip,
 } from "antd";
+import { useMoralis } from "react-moralis";
 import { InboxOutlined } from "@ant-design/icons";
 
 const { Dragger } = Upload;
 const { Title } = Typography;
 const { TextArea } = Input;
+
 
 const formatNumber = (value) => {
   value += "";
@@ -124,6 +126,7 @@ const NumericInput = (props) => {
 };
 
 const MemeNFTCreate = () => {
+  const { web3, Moralis, user } = useMoralis();
   const [price, setPrice] = useState(0);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -200,7 +203,7 @@ const MemeNFTCreate = () => {
     setDescription(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log({
       images: images,
@@ -208,8 +211,45 @@ const MemeNFTCreate = () => {
       name: name,
       desc: description,
     });
+    await createItem();
+    console.log(images.fileList[0]);
   };
-  console.log(images);
+  
+
+  const createItem = async () => {
+    if (images.fileList.length == 0) {
+      message.error("Please select a file");
+      return;
+    } else if (price == 0) {
+      message.error("Please enter a price");
+      return;
+    } else if (name === "") {
+      message.error("Please enter a name");
+      return;
+    } 
+
+    const fileUrl = images.fileList[0].thumbUrl;
+    const nftFile = new Moralis.File("nftFile.jpg", {base64: fileUrl});
+    await nftFile.saveIPFS();
+
+    const nftFilePath = nftFile.ipfs();
+    const nftFileHash = nftFile.hash();
+
+    const metadata = {
+      name: name,
+      description: description,
+      image: nftFilePath
+    }
+
+    const nftFileMetadataFile = new Moralis.File("metadata.json", {base64 : btoa(JSON.stringify(metadata))});
+    await nftFileMetadataFile.saveIPFS();
+
+    const nftFileMetadataFilePath = nftFileMetadataFile.ipfs();
+    const nftFileMetadataFileHash = nftFileMetadataFile.hash();
+
+    console.log(nftFileMetadataFilePath);
+    console.log(nftFileMetadataFileHash);
+  }
 
   return (
     <div>
