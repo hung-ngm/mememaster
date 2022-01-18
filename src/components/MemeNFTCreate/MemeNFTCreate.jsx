@@ -1,5 +1,16 @@
-import React, { useState } from 'react'
-import { Upload, Modal, message, Row, Col, Typography, Input, Button, Tooltip } from 'antd';
+import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
+import {
+  Upload,
+  Modal,
+  message,
+  Row,
+  Col,
+  Typography,
+  Input,
+  Button,
+  Tooltip,
+} from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 
 const { Dragger } = Upload;
@@ -7,11 +18,11 @@ const { Title } = Typography;
 const { TextArea } = Input;
 
 const formatNumber = (value) => {
-  value += '';
-  const list = value.split('.');
-  const prefix = list[0].charAt(0) === '-' ? '-' : '';
+  value += "";
+  const list = value.split(".");
+  const prefix = list[0].charAt(0) === "-" ? "-" : "";
   let num = prefix ? list[0].slice(1) : list[0];
-  let result = '';
+  let result = "";
   while (num.length > 3) {
     result = `,${num.slice(-3)}${result}`;
     num = num.slice(0, num.length - 3);
@@ -19,8 +30,8 @@ const formatNumber = (value) => {
   if (num) {
     result = num + result;
   }
-  return `${prefix}${result}${list[1] ? `.${list[1]}` : ''}`;
-}
+  return `${prefix}${result}${list[1] ? `.${list[1]}` : ""}`;
+};
 
 const styles = {
   fileUpload: {
@@ -40,14 +51,14 @@ const styles = {
   },
   nameInput: {
     width: "100%",
-    minWidth: "475px"
+    minWidth: "475px",
   },
   descriptionTextArea: {
     height: "120px",
     minWidth: "475px",
     width: "100%",
-  }
-}
+  },
+};
 
 // transfer file to data url
 function getBase64(file) {
@@ -60,11 +71,15 @@ function getBase64(file) {
 }
 
 // enter price
-const NumericInput = (props) => {  
-  const onChange = e => {
-    console.log(e.target.value)
+const NumericInput = (props) => {
+  const onChange = (e) => {
+    console.log(e.target.value);
     const reg = /^-?\d*(\.\d*)?$/;
-    if ((!isNaN(e.target.value) && reg.test(e.target.value)) || e.target.value === '' || e.target.value === '-') {
+    if (
+      (!isNaN(e.target.value) && reg.test(e.target.value)) ||
+      e.target.value === "" ||
+      e.target.value === "-"
+    ) {
       props.onChange(e.target.value);
     }
   };
@@ -72,10 +87,10 @@ const NumericInput = (props) => {
   const onBlur = () => {
     const { value, onChange } = props;
     let valueTemp = value;
-    if (value.charAt(value.length - 1) === '.' || value === '-') {
+    if (value.charAt(value.length - 1) === "." || value === "-") {
       valueTemp = value.slice(0, -1);
     }
-    onChange(valueTemp.replace(/0*(\d+)/, '$1'));
+    onChange(valueTemp.replace(/0*(\d+)/, "$1"));
     if (onBlur) {
       onBlur();
     }
@@ -83,13 +98,15 @@ const NumericInput = (props) => {
 
   const { value } = props;
   const title = value ? (
-    <span className="numeric-input-title">{value !== '-' ? formatNumber(value) : '-'}</span>
+    <span className="numeric-input-title">
+      {value !== "-" ? formatNumber(value) : "-"}
+    </span>
   ) : (
-    'Input a number'
+    "Input a number"
   );
   return (
     <Tooltip
-      trigger={['focus']}
+      trigger={["focus"]}
       title={title}
       placement="topLeft"
       overlayClassName="numeric-input"
@@ -104,24 +121,36 @@ const NumericInput = (props) => {
       />
     </Tooltip>
   );
-}
+};
 
 const MemeNFTCreate = () => {
   const [price, setPrice] = useState(0);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  var imgUrl = new URLSearchParams(useLocation().search).get("img");
+  const originalFileList = [];
+  if (imgUrl) {
+    imgUrl = imgUrl.replace(/ /g, "+");
+    originalFileList.push({
+      uid: "-1",
+      name: "mememaster.png",
+      status: "done",
+      url: imgUrl,
+    });
+  }
+
   const [images, setImages] = useState({
     previewVisible: false,
     previewImage: "",
     previewTitle: "",
-    fileList: [],
+    fileList: originalFileList,
   });
 
   const props = {
     name: "file",
     multiple: true,
-    // action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
-    listType:"picture-card",
+    fileList: images.fileList,
+    listType: "picture-card",
     beforeUpload(file) {
       const isJpgOrPng =
         file.type === "image/jpeg" || file.type === "image/png";
@@ -138,12 +167,12 @@ const MemeNFTCreate = () => {
     onChange(info) {
       const fileList = info.fileList;
       setImages({
-        previewVisible: images.previewVisible,
-        previewImage: images.previewImage,
-        previewTitle: images.previewTitle,
+        ...images,
         fileList: fileList,
       });
-      message.success(`${info.file.name} file uploaded successfully.`);
+      if (info.file.status === "removed")
+        message.success(`${info.file.name} file removed successfully.`);
+      else message.success(`${info.file.name} file uploaded successfully.`);
     },
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);
@@ -153,29 +182,23 @@ const MemeNFTCreate = () => {
         file.preview = await getBase64(file.originFileObj);
       }
       setImages({
+        ...images,
         previewImage: file.url || file.preview,
         previewVisible: true,
         previewTitle:
           file.name || file.url.substring(file.url.lastIndexOf("/") + 1),
-        fileList: images.fileList
       });
     },
   };
   const onPriceChange = (e) => {
     setPrice(e);
-  }
+  };
   const onNameChange = (e) => {
     setName(e.target.value);
-  }
+  };
   const onDescriptionChange = (e) => {
     setDescription(e.target.value);
-  }
-
-  // const onImageChange = (imageList, addUpdateIndex) => {
-  //   // data for submit
-  //   console.log(imageList, addUpdateIndex);
-  //   setImages(imageList);
-  // };
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -183,11 +206,11 @@ const MemeNFTCreate = () => {
       images: images,
       price: price,
       name: name,
-      desc: description
-    })
-  }
+      desc: description,
+    });
+  };
   console.log(images);
-  
+
   return (
     <div>
       <Title>Create your meme as an NFT</Title>
@@ -197,7 +220,6 @@ const MemeNFTCreate = () => {
             <div id="fileUpload" style={styles.titleWrapper}>
               <Title level={4}>Upload file</Title>
               <Col span={20} offset={2} style={styles.fileUpload}>
-                {/* <ImageUploader /> */}
                 <Dragger {...props}>
                   <p className="ant-upload-drag-icon">
                     <InboxOutlined />
@@ -206,33 +228,39 @@ const MemeNFTCreate = () => {
                     Click or drag file to this area to upload
                   </p>
                   <p className="ant-upload-hint">
-                    Support for a single or bulk upload. Strictly prohibit from uploading
-                    company data or other band files
+                    Support for a single or bulk upload. Strictly prohibit from
+                    uploading company data or other band files
                   </p>
                 </Dragger>
                 <Modal
                   visible={images.previewVisible}
                   title={images.previewTitle}
                   footer={null}
-                  onCancel={() => setImages({
-                    previewVisible: false,
-                    previewImage: "",
-                    previewTitle: "",
-                    fileList: images.fileList,
-                  })}
+                  onCancel={() =>
+                    setImages({
+                      ...images,
+                      previewVisible: false,
+                      previewImage: "",
+                      previewTitle: "",
+                    })
+                  }
                 >
-                  <img alt={images.previewTitle} style={{ width: "100%" }} src={images.previewImage} />
+                  <img
+                    alt={images.previewTitle}
+                    style={{ width: "100%" }}
+                    src={images.previewImage}
+                  />
                 </Modal>
               </Col>
             </div>
           </Row>
-          
+
           <Row>
             <div id="price" style={styles.titleWrapper}>
               <Title level={4}>Price</Title>
               <Col span={24}>
                 <NumericInput value={price} onChange={onPriceChange} />
-              </Col>  
+              </Col>
             </div>
           </Row>
 
@@ -243,9 +271,9 @@ const MemeNFTCreate = () => {
                 <Input
                   size="large"
                   placeholder="Enter your name"
-                  style={styles.nameInput} 
-                  value={name} 
-                  onChange={onNameChange} 
+                  style={styles.nameInput}
+                  value={name}
+                  onChange={onNameChange}
                 />
               </Col>
             </div>
@@ -258,34 +286,39 @@ const MemeNFTCreate = () => {
                   <Title level={4}>Description</Title>
                 </Col>
                 <Col span={19}>
-                  <Title level={4} style={{ color: 'grey' }}>(Optional)</Title>
+                  <Title level={4} style={{ color: "grey" }}>
+                    (Optional)
+                  </Title>
                 </Col>
               </Row>
               <Row id="descriptionText">
-                <TextArea 
-                  showCount 
-                  maxLength={150} 
+                <TextArea
+                  showCount
+                  maxLength={150}
                   value={description}
                   style={styles.descriptionTextArea}
-                  onChange={onDescriptionChange} 
+                  onChange={onDescriptionChange}
                 />
               </Row>
-            </div>  
+            </div>
           </Row>
 
           <Row>
             <div id="createButton" style={styles.titleWrapper}>
-              <Button type="primary" shape="round" size="large" onClick={handleSubmit}>Create item</Button>
+              <Button
+                type="primary"
+                shape="round"
+                size="large"
+                onClick={handleSubmit}
+              >
+                Create item
+              </Button>
             </div>
           </Row>
-
         </Col>
-        {/* <Col span={6} id="previewFile">
-          <Title level={4} style={styles.titleWrapper}>Preview</Title>
-        </Col> */}
       </Row>
     </div>
-  )
-}
+  );
+};
 
-export default MemeNFTCreate
+export default MemeNFTCreate;
