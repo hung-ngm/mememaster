@@ -12,12 +12,15 @@ import {
   Tooltip,
 } from "antd";
 import { useMoralis } from "react-moralis";
+import Web3 from "web3";
+import tokenContractAbi from "../../contracts/abis/tokenContractAbi.js"
 import { InboxOutlined } from "@ant-design/icons";
 
 const { Dragger } = Upload;
 const { Title } = Typography;
 const { TextArea } = Input;
 
+const TOKEN_CONTRACT_ADDRESS = "0xB798f7fFf20B19D7C61751907AF74aD64EeF73B8";
 
 const formatNumber = (value) => {
   value += "";
@@ -130,6 +133,8 @@ const MemeNFTCreate = () => {
   const [price, setPrice] = useState(0);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const tokenContract = new web3.eth.Contract(tokenContractAbi, TOKEN_CONTRACT_ADDRESS);
+
   var imgUrl = new URLSearchParams(useLocation().search).get("img");
   const originalFileList = [];
   if (imgUrl) {
@@ -247,8 +252,24 @@ const MemeNFTCreate = () => {
     const nftFileMetadataFilePath = nftFileMetadataFile.ipfs();
     const nftFileMetadataFileHash = nftFileMetadataFile.hash();
 
-    console.log(nftFileMetadataFilePath);
-    console.log(nftFileMetadataFileHash);
+    const nftId = await mintNft(nftFileMetadataFilePath);
+
+    const Item = Moralis.Object.extend("Item");
+    const item = new Item();
+    item.set("name", name);
+    item.set("description", description);
+    item.set("nftFilePath", nftFilePath);
+    item.set("metadataFilePath", nftFileMetadataFilePath);
+    item.set("nftId", nftId);
+    item.set("nftContractAddress", TOKEN_CONTRACT_ADDRESS);
+    await item.save();
+    console.log(item);
+  }
+
+  const mintNft = async (metadataUrl) => {
+    const receipt = await tokenContract.methods.createItem(metadataUrl).send({ from: web3.currentProvider.selectedAddress });
+    console.log(receipt);
+    return receipt.events.Transfer.returnValues.tokenId;
   }
 
   return (
