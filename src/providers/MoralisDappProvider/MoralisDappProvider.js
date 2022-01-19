@@ -5,7 +5,8 @@ import MoralisDappContext from "./context";
 function MoralisDappProvider({ children }) {
   const { web3, Moralis, user } = useMoralis();
   const [walletAddress, setWalletAddress] = useState();
-  const [chainId, setChainId] = useState();       
+  const [chainId, setChainId] = useState();   
+
   const [contractABI, setContractABI] = useState('{"noContractDeployed": true}'); //Smart Contract ABI here
   const [marketAddress, setMarketAddress] = useState(); //Smart Contract Address Here
 
